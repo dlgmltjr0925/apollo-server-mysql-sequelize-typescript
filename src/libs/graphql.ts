@@ -58,9 +58,7 @@ const createQueryModels = async ({
   const camelCasedName = camelCase(name);
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const query = `import { Op } from 'sequelize';
-
-const ${camelCasedName} = {
+  const query = `const ${camelCasedName} = {
   parent: 'Query',
   filedName: '${camelCasedName}s',
   returnType: '[${pascalCasedName}]',
@@ -89,38 +87,15 @@ const createMutationCreateModel = async ({
   const name = endPointPrefix + databasePrefix + tableName;
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const mutation = `import { hooks } from '../../hooks';
-import { pubsub } from '../../../libs/apollo';
-
-const beforeHook = hooks['beforeCreate${pascalCasedName}'];
-const afterHook = hooks['afterCreate${pascalCasedName}'];
-
-const create${pascalCasedName} = {
+  const mutation = `const create${pascalCasedName} = {
   parent: 'Mutation',
   filedName: 'create${pascalCasedName}',
   returnType: '${pascalCasedName}',
   args: {
     input: '${pascalCasedName}Input!',
   },
-  resolve: async (parent: any, args: any, context: any, info: any) => {
-    const { input } = args;
-    // beforeHook 
-    if (beforeHook) await beforeHook(parent, args, context, info);
-
-    // main
-    const result = await context.stores.${endPoint}.${database}.${tableName}.create(input);
-
-    // pubsub
-    if (result[0] !== 0) {
-      pubsub.publish('${tableName.toUpperCase()}', { subscribe${pascalCasedName}: [result]});
-    }
-
-    // afterHook
-    if (afterHook) {
-      args.result = result;
-      await afterHook(parent, args, context, info);
-    }
-    return result;
+  resolve: async (parent: any, { input }: any, context: any, info: any) => {
+    return await context.stores.${endPoint}.${database}.${tableName}.create(input);
   }
 };
 
@@ -143,13 +118,7 @@ const createMutationUpdateModel = async ({
   const camelCasedName = camelCase(name, { pascalCase: true });
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const mutation = `import { hooks } from '../../hooks';
-import { pubsub } from '../../../libs/apollo';
-
-const beforeHook = hooks['beforeUpdate${pascalCasedName}'];
-const afterHook = hooks['afterUpdate${pascalCasedName}'];
-
-const update${pascalCasedName} = {
+  const mutation = `const update${pascalCasedName} = {
   parent: 'Mutation',
   filedName: 'update${pascalCasedName}',
   returnType: 'Int',
@@ -157,33 +126,8 @@ const update${pascalCasedName} = {
     input: '${pascalCasedName}Input!',
     where: '${pascalCasedName}Input',
   },
-  resolve: async (parent: any, args: any, context: any, info: any) => {
-    const { input, where } = args;
-    const ${camelCasedName}s = await context.stores.${endPoint}.${database}.${tableName}.findAll({ where });
-    args.before = ${camelCasedName}s;
-
-    // beforeHook 
-    if (beforeHook) await beforeHook(parent, args, context, info);
-
-    // main
-    if (${camelCasedName}s.length === 0) return [0];
-    const result = await context.stores.${endPoint}.${database}.${tableName}.update(input, { where });
-
-    // pubsub
-    if (result[0] !== 0) {
-      for (let i = 0; i < result[0]; i++) {
-        ${camelCasedName}s[i] = { ...${camelCasedName}s[i].dataValues, ...input };
-      }
-      pubsub.publish('${tableName.toUpperCase()}', { subscribe${pascalCasedName}: [result]});
-    }
-
-    // afterHook
-    if (afterHook) {
-      args.result = result;
-      await afterHook(parent, args, context, info);
-    }
-
-    return result[0];
+  resolve: async (parent: any, { input, where }: any, context: any, info: any) => {
+    return await context.stores.${endPoint}.${database}.${tableName}.update(input, { where });
   }
 };
 
@@ -206,36 +150,15 @@ const createMutationDeleteModel = async ({
   const camelCasedName = camelCase(name, { pascalCase: true });
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const mutation = `import { hooks } from '../../hooks';
-import { pubsub } from '../../../libs/apollo';
-
-const beforeHook = hooks['beforeDelete${pascalCasedName}'];
-const afterHook = hooks['afterDelete${pascalCasedName}'];
-
-const delete${pascalCasedName} = {
+  const mutation = `const delete${pascalCasedName} = {
   parent: 'Mutation',
   filedName: 'delete${pascalCasedName}',
   returnType: 'Int',
   args: {
     where: '${pascalCasedName}Input',
   },
-  resolve: async (parent: any, args: any, context: any, info: any) => {
-    const { where } = args;
-    const ${camelCasedName}s = await context.stores.${endPoint}.${database}.${tableName}.findAll({ where });
-    args.before = ${camelCasedName}s;
-
-    // beforeHook 
-    if (beforeHook) await beforeHook(parent, args, context, info);
-
-    const result = await context.stores.${endPoint}.${database}.${tableName}.destroy({ where });
-
-    // afterHook
-    if (afterHook) {
-      args.result = result;
-      await afterHook(parent, args, context, info);
-    }
-
-    return result;
+  resolve: async (parent: any, { where }: any, context: any, info: any) => {
+    return await context.stores.${endPoint}.${database}.${tableName}.destroy({ where });
   }
 };
 

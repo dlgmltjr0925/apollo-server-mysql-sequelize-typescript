@@ -1,3 +1,5 @@
+import log from '../../../utils/log';
+
 export const sample = {
   parent: 'Query',
   filedName: 'sample',
@@ -6,6 +8,7 @@ export const sample = {
     where: 'SampleInput'
   },
   resolve: async (parent: any, args: any, context: any, info: any) => {
+    log.i('sample', args);
     if (!context.stores.sample) context.stores.sample = [];
     try {
       return context.stores.sample.find((sample: any) => {

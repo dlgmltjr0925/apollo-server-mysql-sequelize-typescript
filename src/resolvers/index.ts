@@ -1,25 +1,40 @@
 import {
   RESOLVERS_DATABASES_DIR,
-  RESOLVERS_EXTENDS_DIR
+  RESOLVERS_EXTENDS_DIR,
+  RESOLVERS_HOOKS_DIR
 } from '../constants/path';
 
+import camelCase from 'camelcase';
 import fs from 'fs';
 import log from '../utils/log';
 
 const resolvers = {};
 const graphqlSchemas = {};
 
-export const getResolverWithLifecycle = (resolve: any) => {
+export const getResolverWithLifecycle = (resolve: any, filedName: string) => {
+  const beforeHookPath = `${RESOLVERS_HOOKS_DIR}/before${camelCase(filedName, {
+    pascalCase: true
+  })}.js`;
+  const afterHookPath = `${RESOLVERS_HOOKS_DIR}/after${camelCase(filedName, {
+    pascalCase: true
+  })}.js`;
+
+  const beforeHook =
+    fs.existsSync(beforeHookPath) && require(beforeHookPath).default;
+  const afterHook =
+    fs.existsSync(afterHookPath) && require(afterHookPath).default;
   return async (parent: any, args: any, context: any, info: any) => {
     const { fieldName } = info;
     const start = new Date();
 
-    // TODO before hook
+    if (beforeHook) await beforeHook(parent, args, context, info);
+
     const result = await resolve(parent, args, context, info);
+
+    if (afterHook) afterHook(parent, args, context, info);
+
     const end = new Date();
     log.i(`[${fieldName}]`, (end.valueOf() - start.valueOf()) / 1000 + 's');
-
-    // TODO after hook
     return result;
   };
 };
@@ -39,6 +54,7 @@ export const getGraphqlSchemas = async () => {
 };
 
 const readFiles = async (path: string, resolvers: any, graphqlSchemas: any) => {
+  if (!fs.existsSync(path)) return;
   const parentList = fs.readdirSync(path);
   for (let i = 0; i < parentList.length; i++) {
     if (!resolvers[parentList[i]]) {
@@ -51,7 +67,9 @@ const readFiles = async (path: string, resolvers: any, graphqlSchemas: any) => {
         .default;
       const { parent, filedName, returnType, args, resolve } = resolveObj;
       resolvers[parent][filedName] =
-        parent === 'Subscription' ? resolve : getResolverWithLifecycle(resolve);
+        parent === 'Subscription'
+          ? resolve
+          : getResolverWithLifecycle(resolve, filedName);
       graphqlSchemas[parent][filedName] = { returnType, args };
     }
   }

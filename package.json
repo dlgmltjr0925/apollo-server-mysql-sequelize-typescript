@@ -7,11 +7,9 @@
   "license": "MIT",
   "scripts": {
     "initialize": "bash ./src/scripts/initialize.sh",
-    "update": "git pull && rm -rf dist",
-    "clear": "rm -rf dist",
-    "prebuild": "rm -rf dist && rm -rf src/resolvers/databases/* && tsc && node dist/scripts/prebuild",
-    "build": "tsc",
-    "start": "tsc && node dist/index"
+    "update": "git pull && yarn",
+    "build": "rm -rf dist && rm -rf src/resolvers/databases && tsc && node dist/scripts/prebuild && tsc",
+    "start": "node dist/index"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.5",

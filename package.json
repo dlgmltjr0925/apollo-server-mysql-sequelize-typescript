@@ -1,0 +1,57 @@
+{
+  "name": "apollo-server-mysql-sequelize-typescript",
+  "version": "0.1.0",
+  "description": "Apollo server developed as typescript using sequelize ORM based on mysql schema",
+  "main": "dist/index.js",
+  "author": "balocode",
+  "license": "MIT",
+  "scripts": {
+    "initialize": "bash ./src/scripts/initialize.sh",
+    "update": "git pull && rm -rf dist",
+    "clear": "rm -rf dist",
+    "prebuild": "rm -rf dist && rm -rf src/resolvers/databases/* && tsc && node dist/scripts/prebuild",
+    "build": "tsc",
+    "start": "tsc && node dist/index"
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.6.5",
+    "apollo-client": "^2.6.8",
+    "apollo-link-http": "^1.5.16",
+    "apollo-server": "^2.9.16",
+    "camelcase": "^5.3.1",
+    "graphql": "^14.6.0",
+    "lodash": "^4.17.15",
+    "mysql2": "^2.1.0",
+    "sequelize": "^5.21.3"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.29",
+    "@types/lodash": "^4.14.149",
+    "@types/validator": "^12.0.1",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "colors": "^1.4.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlgmltjr0925/apollo-server-mysql-sequelize-typescript.git"
+  },
+  "keywords": [
+    "apollo",
+    "graphql",
+    "apollo server",
+    "typescript",
+    "sequelize"
+  ],
+  "bugs": {
+    "url": "https://github.com/dlgmltjr0925/apollo-server-mysql-sequelize-typescript/issues"
+  },
+  "homepage": "https://github.com/dlgmltjr0925/apollo-server-mysql-sequelize-typescript#readme"
+}

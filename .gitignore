@@ -114,5 +114,6 @@ temp/
 src/configs/index.ts
 
 # resolvers, schemas
-src/resolvers/databases/*
-src/schemas/databases/*
+src/hooks/databases
+src/resolvers/databases
+src/schemas/databases

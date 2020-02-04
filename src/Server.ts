@@ -58,10 +58,10 @@ class Server implements Server {
 
     const subscriptions = {
       onConnect: (connectionParams: any, webSocket: any, context: any) => {
-        log.d('Connect subscription');
+        log.i('Connect subscription');
       },
       onDisconnect: (webSocket: any, context: any) => {
-        log.d('Disconnect subscription');
+        log.i('Disconnect subscription');
       }
     };
 

@@ -227,23 +227,15 @@ export const createStores = async (): Promise<Stores> => {
             configs.defaultGenerateOptions
           );
           if (accessInfo.generateOptions) {
-            const { period, resolvers } = accessInfo.generateOptions;
+            const { period } = accessInfo.generateOptions;
             if (period !== undefined) generateOptions.period = period;
-            if (resolvers) {
-              const { query, mutation, subscribe } = resolvers;
+            if (
+              accessInfo.generateOptions &&
+              accessInfo.generateOptions.resolvers
+            ) {
               generateOptions.resolvers = {
-                query: {
-                  ...generateOptions.resolvers.query,
-                  ...query
-                },
-                mutation: {
-                  ...generateOptions.resolvers.mutation,
-                  ...mutation
-                },
-                subscribe:
-                  subscribe !== undefined
-                    ? subscribe
-                    : generateOptions.resolvers.subscribe
+                ...generateOptions.resolvers,
+                ...accessInfo.generateOptions.resolvers
               };
             }
           }

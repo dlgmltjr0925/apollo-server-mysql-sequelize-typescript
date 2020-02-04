@@ -26,15 +26,24 @@ export enum PERIOD {
 export interface GenerateOptions {
   period: PERIOD;
   resolvers: {
-    query: {
-      single: boolean;
-      multi: boolean;
-    };
-    mutation: {
-      create: boolean;
-      update: boolean;
-      delete: boolean;
-    };
+    beforeHookQuerySingle: boolean;
+    querySingle: boolean;
+    afterHookQuerySingle: boolean;
+    beforeHookQueryMulti: boolean;
+    queryMulti: boolean;
+    afterHookQueryMulti: boolean;
+    beforeHookMutationCreate: boolean;
+    mutationCreate: boolean;
+    afterHookMutationCreate: boolean;
+    pubsubMutationCreate: boolean;
+    beforeHookMutationUpdate: boolean;
+    mutationUpdate: boolean;
+    afterHookMutationUpdate: boolean;
+    pubsubMutationUpdate: boolean;
+    beforeHookMutationDelete: boolean;
+    mutationDelete: boolean;
+    afterHookMutationDelete: boolean;
+    pubsubMutationDelete: boolean;
     subscribe: boolean;
   };
 }
@@ -81,15 +90,24 @@ const configs: Configs = {
   defaultGenerateOptions: {
     period: PERIOD.ALWAYS,
     resolvers: {
-      query: {
-        single: true,
-        multi: true
-      },
-      mutation: {
-        create: true,
-        update: true,
-        delete: true
-      },
+      beforeHookQuerySingle: true,
+      querySingle: true,
+      afterHookQuerySingle: true,
+      beforeHookQueryMulti: true,
+      queryMulti: true,
+      afterHookQueryMulti: true,
+      beforeHookMutationCreate: true,
+      mutationCreate: true,
+      afterHookMutationCreate: true,
+      pubsubMutationCreate: true,
+      beforeHookMutationUpdate: true,
+      mutationUpdate: true,
+      afterHookMutationUpdate: true,
+      pubsubMutationUpdate: true,
+      beforeHookMutationDelete: true,
+      mutationDelete: true,
+      afterHookMutationDelete: true,
+      pubsubMutationDelete: true,
       subscribe: true
     }
   },
@@ -130,15 +148,24 @@ const configs: Configs = {
           generateOptions: {
             period: PERIOD.ALWAYS,
             resolvers: {
-              query: {
-                single: true,
-                multi: true
-              },
-              mutation: {
-                create: true,
-                update: true,
-                delete: true
-              },
+              beforeHookQuerySingle: true,
+              querySingle: true,
+              afterHookQuerySingle: true,
+              beforeHookQueryMulti: true,
+              queryMulti: true,
+              afterHookQueryMulti: true,
+              beforeHookMutationCreate: true,
+              mutationCreate: true,
+              afterHookMutationCreate: true,
+              pubsubMutationCreate: true,
+              beforeHookMutationUpdate: true,
+              mutationUpdate: true,
+              afterHookMutationUpdate: true,
+              pubsubMutationUpdate: true,
+              beforeHookMutationDelete: true,
+              mutationDelete: true,
+              afterHookMutationDelete: true,
+              pubsubMutationDelete: true,
               subscribe: true
             }
           }

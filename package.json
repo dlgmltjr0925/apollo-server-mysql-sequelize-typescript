@@ -8,7 +8,8 @@
   "scripts": {
     "initialize": "bash ./src/scripts/initialize.sh",
     "update": "git pull && yarn",
-    "build": "rm -rf dist && rm -rf src/resolvers/databases && tsc && node dist/scripts/prebuild && tsc",
+    "clear": "rm -rf dist src/resolvers/databases src/hooks/databases",
+    "build": "yarn clear && tsc && node dist/scripts/prebuild && tsc",
     "start": "node dist/index"
   },
   "dependencies": {

@@ -1,41 +1,50 @@
 import {
   RESOLVERS_DATABASES_DIR,
-  RESOLVERS_EXTENDS_DIR,
-  RESOLVERS_HOOKS_DIR
+  RESOLVERS_EXTENDS_DIR
 } from '../constants/path';
 
 import camelCase from 'camelcase';
 import fs from 'fs';
+import hooks from '../hooks';
 import log from '../utils/log';
 
 const resolvers = {};
 const graphqlSchemas = {};
 
 export const getResolverWithLifecycle = (resolve: any, filedName: string) => {
-  const beforeHookPath = `${RESOLVERS_HOOKS_DIR}/before${camelCase(filedName, {
-    pascalCase: true
-  })}.js`;
-  const afterHookPath = `${RESOLVERS_HOOKS_DIR}/after${camelCase(filedName, {
-    pascalCase: true
-  })}.js`;
-
   const beforeHook =
-    fs.existsSync(beforeHookPath) && require(beforeHookPath).default;
-  const afterHook =
-    fs.existsSync(afterHookPath) && require(afterHookPath).default;
+    hooks[`before${camelCase(filedName, { pascalCase: true })}`];
+  const afterHook = hooks[`after${camelCase(filedName, { pascalCase: true })}`];
+
   return async (parent: any, args: any, context: any, info: any) => {
-    const { fieldName } = info;
-    const start = new Date();
+    try {
+      const { fieldName } = info;
+      const start = new Date();
 
-    if (beforeHook) await beforeHook(parent, args, context, info);
+      try {
+        if (beforeHook) await beforeHook(parent, args, context, info);
+      } catch (error) {
+        log.e(error);
+        throw error;
+      }
 
-    const result = await resolve(parent, args, context, info);
+      log.i(`[${fieldName}]`);
+      const result = await resolve(parent, args, context, info);
 
-    if (afterHook) afterHook(parent, args, context, info);
+      try {
+        if (afterHook) afterHook(parent, args, context, info);
+      } catch (error) {
+        log.e(error);
+        throw error;
+      }
 
-    const end = new Date();
-    log.i(`[${fieldName}]`, (end.valueOf() - start.valueOf()) / 1000 + 's');
-    return result;
+      const end = new Date();
+      log.i(`[${fieldName}]`, (end.valueOf() - start.valueOf()) / 1000 + 's');
+      return result;
+    } catch (error) {
+      log.e(error);
+      throw error;
+    }
   };
 };
 

@@ -4,15 +4,6 @@ import cluster from 'cluster';
 import configs from './configs';
 import log from './utils/log';
 
-const master = async (): Promise<void> => {
-  for (let i = 0; i < configs.cluster.count; i++) {
-    const worker = cluster.fork();
-    worker.on('exit', (code, signal) => {
-      log.f(code, signal);
-    });
-  }
-};
-
 const worker = async (): Promise<void> => {
   const options = await Server.getOptions();
 
@@ -20,6 +11,16 @@ const worker = async (): Promise<void> => {
   const { url, subscriptionsUrl } = await server.listen();
   log.i(`🚀 Server ready at ${url}`);
   log.i(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
+};
+
+const master = async (): Promise<void> => {
+  if (configs.cluster.count === 1) worker();
+  for (let i = 0; i < configs.cluster.count; i++) {
+    const worker = cluster.fork();
+    worker.on('exit', (code, signal) => {
+      log.f(code, signal);
+    });
+  }
 };
 
 if (cluster.isMaster) {

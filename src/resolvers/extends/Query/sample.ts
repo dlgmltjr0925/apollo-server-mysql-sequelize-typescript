@@ -8,14 +8,18 @@ export const sample = {
     where: 'SampleInput'
   },
   resolve: async (parent: any, args: any, context: any, info: any) => {
-    log.i('sample', args);
-    if (!context.stores.sample) context.stores.sample = [];
+    log.i('[sample]', args.where);
+    if (!context.stores.sample)
+      context.stores.sample = { nextKey: 1, datas: [] };
+    const where = { ...args.where };
+    if (!where || Object.keys(where).length === 0) {
+      return context.stores.sample.datas[0];
+    }
     try {
-      return context.stores.sample.find((sample: any) => {
+      return context.stores.sample.datas.find((sample: any) => {
+        log.d(Object.keys(where));
         return (
-          Object.keys(args.where).findIndex(
-            key => args.where[key] === sample[key]
-          ) !== -1
+          Object.keys(where).findIndex(key => where[key] === sample[key]) !== -1
         );
       });
     } catch (error) {

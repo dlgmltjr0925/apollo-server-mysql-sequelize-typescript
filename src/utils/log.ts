@@ -4,8 +4,6 @@ import { LOG_LABEL } from '../constants';
 
 type LogFunction = (...optionalPrams: any[]) => void;
 
-type LogTimeFunction = (label: string | undefined) => void;
-
 const setDebug = (): LogFunction => {
   if (configs.log.level <= LOG_LEVEL.DEBUG) {
     if (configs.env === ENV.DEV) {

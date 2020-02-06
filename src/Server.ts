@@ -6,6 +6,7 @@ import {
 } from './libs/graphql';
 import { getSchemas, getTypeDefs } from './schemas';
 
+import client from './utils/client';
 import { getResolvers } from './resolvers';
 import log from './utils/log';
 
@@ -55,6 +56,7 @@ class Server implements Server {
       return {
         ...context,
         stores,
+        client,
         user
       };
     };

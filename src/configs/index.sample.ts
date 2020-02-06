@@ -68,6 +68,8 @@ export interface Messages {
 
 export interface Configs {
   env: ENV;
+  host: string;
+  port: number;
   log: {
     level: LOG_LEVEL;
   };
@@ -79,8 +81,10 @@ export interface Configs {
   messages: Messages;
 }
 
-const configs: Configs = {
+export const configs: Configs = {
   env: ENV.DEV, // <-- Edit the operating environment.
+  host: 'localhost',
+  port: 4000,
   log: {
     level: LOG_LEVEL.DEBUG
   },

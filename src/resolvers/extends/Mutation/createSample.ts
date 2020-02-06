@@ -27,6 +27,12 @@ const createSample = {
     });
 
     return context.stores.sample.datas.slice(-1)[0];
+  },
+  beforeHook: (parent: any, args: any, context: any, info: any) => {
+    log.d('[beforeCreateSample]');
+  },
+  afterHook: (parent: any, args: any, context: any, info: any) => {
+    log.d('[afterCreateSample]');
   }
 };
 

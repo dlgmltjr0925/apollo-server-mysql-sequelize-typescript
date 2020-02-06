@@ -21,12 +21,14 @@
     "dataloader": "^2.0.0",
     "global": "^4.4.0",
     "graphql": "^14.6.0",
+    "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.15",
     "mysql2": "^2.1.0",
     "sequelize": "^5.21.3"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.29",
+    "@types/isomorphic-fetch": "0.0.35",
     "@types/lodash": "^4.14.149",
     "@types/validator": "^12.0.1",
     "@typescript-eslint/eslint-plugin": "^2.18.0",

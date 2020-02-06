@@ -36,6 +36,7 @@ const readFiles = async (path: string, resolvers: any, graphqlSchemas: any) => {
       const options = require(`${path}/${parentList[i]}/${childList[j]}`)
         .default;
       let resolverInstance;
+      if (!options) continue;
       if (options.parent === 'Mutation') {
         resolverInstance = new Mutation<any, any>(options);
       } else if (options.parent === 'Subscription') {

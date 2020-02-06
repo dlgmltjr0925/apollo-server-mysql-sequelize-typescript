@@ -6,8 +6,8 @@ import { gql } from 'apollo-server';
 import log from '../utils/log';
 
 enum SCHEMA_TYPE {
-  OBJECT = 'object',
-  OBJECTIO = 'objectIO',
+  OBJECT = 'Object',
+  OBJECTIO = 'ObjectIO',
   ENUM = 'enum'
 }
 
@@ -127,8 +127,11 @@ export const getTypeDefs = async () => {
       schemaType,
       subfield
     } = require(`${SCHEMAS_EXTENDS_DIR}/${file}`).default;
-    if (!schemas[fieldName]) schemas[fieldName] = { schemaType };
-
+    if (!schemas[fieldName])
+      schemas[fieldName] = {
+        schemaType:
+          schemaType === SCHEMA_TYPE.OBJECTIO ? SCHEMA_TYPE.OBJECT : schemaType
+      };
     Object.keys(subfield).map(name => {
       if (typeof subfield[name] === 'string') {
         subfield[name] = {
@@ -140,8 +143,7 @@ export const getTypeDefs = async () => {
     schemas[fieldName] = { ...schemas[fieldName], ...subfield };
     if (schemaType === SCHEMA_TYPE.OBJECTIO) {
       schemas[fieldName + 'Input'] = {
-        ...schemas[fieldName + 'Input'],
-        ...subfield
+        ...schemas[fieldName]
       };
     }
   });
@@ -152,13 +154,12 @@ export const getTypeDefs = async () => {
     schemas[type] = { ...schemas[type], ...resolverSchema[type] };
   });
 
-  // 타입 정의 (개발환경일 경우 확인을 위한 파일도 생성);
   typeDefs = 'scalar Date\n';
 
-  // Query, Mutation, Subscription 정의
+  // define Query, Mutation, Subscription
   await addResolver();
 
-  // Schema 정의
+  // define Schema
   await addSchema();
 
   return gql`

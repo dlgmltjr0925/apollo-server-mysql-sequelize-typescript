@@ -63,6 +63,7 @@ const getSequelizeTypeFromDBType = (dbType: string) => {
     case 'varchar':
       return STRING(parseInt(value[0], 10));
     case 'text':
+    case 'longtext':
       return TEXT;
     case 'tinytext':
       return TEXT({ length: 'tiny' });
@@ -100,6 +101,8 @@ const getSequelizeTypeFromDBType = (dbType: string) => {
       return GEOMETRY;
     case 'point':
       return GEOMETRY('point');
+    default:
+      throw new Error(`${dbType} cannot be changed.`);
   }
 };
 
@@ -178,6 +181,14 @@ const createModels = async (
   // define sequelize type
   await Promise.all(
     Object.keys(schemas).map(async modelName => {
+      // If there is no primary key, the first column acts as the primary key.
+      const columns = Object.keys(schemas[modelName]);
+      if (
+        columns.findIndex(column => schemas[modelName][column].primaryKey) ===
+        -1
+      )
+        schemas[modelName][columns[0]].primaryKey = true;
+      //
       try {
         await sequelize.define(modelName, schemas[modelName], {
           tableName: tableNameTable[modelName]

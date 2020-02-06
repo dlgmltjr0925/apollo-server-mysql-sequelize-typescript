@@ -205,16 +205,13 @@ const createModels = async (
 export const createStores = async (): Promise<Stores> => {
   const stores: Stores = {};
   await Promise.all(
-    configs.databases.map(async ({ alias, options, accessInfos }) => {
-      const { host, port } = options;
-      const endPoint: string = alias || `${host}:${port}`;
-      stores[endPoint] = {};
+    configs.databases.map(async ({ hostname, options, accessInfos }) => {
+      stores[hostname] = {};
       const { database, user, password } = accessInfos[0];
       const sequelize = new Sequelize(database, user, password, options);
       await Promise.all(
         accessInfos.slice(1).map(async accessInfo => {
           const { alias, database } = accessInfo;
-          const databaseName = alias || camelCase(database);
           const [columns] = await sequelize.query(`
             SELECT
               table_name as 'tableName', 
@@ -250,10 +247,9 @@ export const createStores = async (): Promise<Stores> => {
               };
             }
           }
-          stores[endPoint][databaseName] = models;
-          stores[endPoint][databaseName].getSchemas = () => schemas;
-          stores[endPoint][databaseName].getGenerateOptions = () =>
-            generateOptions;
+          stores[hostname][alias] = models;
+          stores[hostname][alias].getSchemas = () => schemas;
+          stores[hostname][alias].getGenerateOptions = () => generateOptions;
         })
       );
     })

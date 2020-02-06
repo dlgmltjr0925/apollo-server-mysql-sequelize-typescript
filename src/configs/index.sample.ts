@@ -49,15 +49,15 @@ export interface GenerateOptions {
 }
 
 export interface AccessInfo {
-  alias?: string;
   database: string;
   user: string;
   password: string;
+  alias: string;
   generateOptions?: Partial<GenerateOptions>;
 }
 
 export interface Database {
-  alias?: string;
+  hostname: string;
   options: Options;
   accessInfos: AccessInfo[];
 }
@@ -117,7 +117,7 @@ export const configs: Configs = {
   },
   databases: [
     {
-      alias: 'endpoint1', // <-- Identifier to host(optional, unique). if not input value, 'host:port'
+      hostname: 'hostname1',
       options: {
         dialect: 'mysql',
         host: 'host', // <-- Edit host of Database server
@@ -142,13 +142,14 @@ export const configs: Configs = {
         {
           database: 'information_schema',
           user: 'user', // <-- Edit the DDL account information for that database.
-          password: 'password' // <-- Edit the DDL account information for that database.
+          password: 'password', // <-- Edit the DDL account information for that database.
+          alias: 'information_schema'
         },
         {
-          database: 'database_name', // <-- Enter the name of the database you will use.
+          database: 'database', // <-- Enter the name of the database you will use.
           user: 'user', // <-- Edit the DML account information for that database.
           password: 'password', // <-- Edit the DML account information for that database.
-          alias: '', // <-- Identifier to database(optional, unique). if not input value, 'database value'
+          alias: 'database1', // <-- Identifier to database(unique)
           generateOptions: {
             period: PERIOD.ALWAYS,
             resolvers: {

@@ -19,7 +19,7 @@ import log from '../../utils/log';
 
 export interface ModelArg {
   prefix?: string;
-  subfix?: string;
+  suffix?: string;
   endPoint: string;
   endPointPrefix: string;
   database: string;

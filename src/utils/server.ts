@@ -1,14 +1,14 @@
-import { Stores, checkUpdateState, createStores } from './libs/sequelize';
-import configs, { PERIOD } from './configs';
+import { Stores, checkUpdateState, createStores } from '../libs/sequelize';
+import configs, { PERIOD } from '../configs';
 import {
   createGraphqlSchemasFromStore,
   createResolversFromStore
-} from './libs/graphql';
-import { getSchemas, getTypeDefs } from './schemas';
+} from '../libs/graphql';
+import { getSchemas, getTypeDefs } from '../schemas';
 
-import client from './utils/client';
-import { getResolvers } from './resolvers';
-import log from './utils/log';
+import client from '../utils/client';
+import { getResolvers } from '../resolvers';
+import log from '../utils/log';
 
 interface Context {
   stores: Stores;

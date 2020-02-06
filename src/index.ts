@@ -1,17 +1,8 @@
 import { ApolloServer } from 'apollo-server';
-import Server from './Server';
+import Server from './utils/server';
 import cluster from 'cluster';
 import configs from './configs';
 import log from './utils/log';
-
-const worker = async (): Promise<void> => {
-  const options = await Server.getOptions();
-
-  const server = new ApolloServer(options);
-  const { url, subscriptionsUrl } = await server.listen();
-  log.i(`🚀 Server ready at ${url}`);
-  log.i(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
-};
 
 const master = async (): Promise<void> => {
   if (configs.cluster.count <= 1) worker();
@@ -23,6 +14,15 @@ const master = async (): Promise<void> => {
       });
     }
   }
+};
+
+const worker = async (): Promise<void> => {
+  const options = await Server.getOptions();
+
+  const server = new ApolloServer(options);
+  const { url, subscriptionsUrl } = await server.listen();
+  log.i(`🚀 Server ready at ${url}`);
+  log.i(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
 };
 
 if (cluster.isMaster) {

@@ -2,7 +2,7 @@ import log from '../../../utils/log';
 
 export const sample = {
   parent: 'Query',
-  filedName: 'sample',
+  fieldName: 'sample',
   returnType: 'Sample',
   args: {
     where: 'SampleInput'
@@ -17,7 +17,6 @@ export const sample = {
     }
     try {
       return context.stores.sample.datas.find((sample: any) => {
-        log.d(Object.keys(where));
         return (
           Object.keys(where).findIndex(key => where[key] === sample[key]) !== -1
         );

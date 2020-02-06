@@ -5,14 +5,6 @@ export const CONFIGS_DIR = BUILD_ROOT + '/configs';
 
 export const CONSTANTS_DIR = BUILD_ROOT + '/constants';
 
-export const HOOKS_DIR = BUILD_ROOT + '/hooks';
-export const HOOKS_DATABASES_DIR = HOOKS_DIR + '/databases';
-export const HOOKS_EXTENDS_DIR = HOOKS_DIR + '/extends';
-
-export const APP_HOOKS_DIR = APP_ROOT + '/src/hooks';
-export const APP_HOOKS_DATABASES_DIR = APP_HOOKS_DIR + '/databases';
-export const APP_HOOKS_EXTENDS_DIR = APP_HOOKS_DIR + '/extends';
-
 export const LIBS_DIR = BUILD_ROOT + '/libs';
 export const DB_CHECK_DIR = BUILD_ROOT + '/libs/sequelize/check';
 
@@ -39,14 +31,6 @@ export default {
   CONFIGS_DIR,
 
   CONSTANTS_DIR,
-
-  HOOKS_DIR,
-  HOOKS_DATABASES_DIR,
-  HOOKS_EXTENDS_DIR,
-
-  APP_HOOKS_DIR,
-  APP_HOOKS_DATABASES_DIR,
-  APP_HOOKS_EXTENDS_DIR,
 
   LIBS_DIR,
   DB_CHECK_DIR,

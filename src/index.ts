@@ -14,12 +14,14 @@ const worker = async (): Promise<void> => {
 };
 
 const master = async (): Promise<void> => {
-  if (configs.cluster.count === 1) worker();
-  for (let i = 0; i < configs.cluster.count; i++) {
-    const worker = cluster.fork();
-    worker.on('exit', (code, signal) => {
-      log.f(code, signal);
-    });
+  if (configs.cluster.count <= 1) worker();
+  else {
+    for (let i = 0; i < configs.cluster.count; i++) {
+      const worker = cluster.fork();
+      worker.on('exit', (code, signal) => {
+        log.f(code, signal);
+      });
+    }
   }
 };
 

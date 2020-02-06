@@ -3,7 +3,7 @@ import { pubsub } from '../../../libs/apollo';
 
 const createSample = {
   parent: 'Mutation',
-  filedName: 'createSample',
+  fieldName: 'createSample',
   returnType: 'Sample',
   args: {
     input: 'SampleInput'

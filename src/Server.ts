@@ -46,9 +46,16 @@ class Server implements Server {
       schemas[name] = graphqlSchemas[name];
     });
 
-    const context = () => {
+    const context = (context: any) => {
+      const { req } = context;
+      // TODO get User from req.header. User
+      const token = req.headers.authorization || '';
+      const user = { token };
+
       return {
-        stores
+        ...context,
+        stores,
+        user
       };
     };
 
@@ -59,9 +66,11 @@ class Server implements Server {
     const subscriptions = {
       onConnect: (connectionParams: any, webSocket: any, context: any) => {
         log.i('Connect subscription');
+        log.d(connectionParams, webSocket, context);
       },
       onDisconnect: (webSocket: any, context: any) => {
         log.i('Disconnect subscription');
+        log.d(webSocket, context);
       }
     };
 

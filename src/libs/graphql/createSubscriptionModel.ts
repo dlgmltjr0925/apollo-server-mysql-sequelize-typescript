@@ -17,7 +17,7 @@ export const createSubscriptionModel = async ({
 
 const subscribe${pascalCasedName} = {
   parent: 'Subscription',
-  filedName: 'subscribe${pascalCasedName}',
+  fieldName: 'subscribe${pascalCasedName}',
   returnType: '${pascalCasedName}',
   args: {},
   resolve: {

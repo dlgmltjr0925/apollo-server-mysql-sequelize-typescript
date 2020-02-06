@@ -1,6 +1,4 @@
 import {
-  APP_HOOKS_DATABASES_DIR,
-  APP_HOOKS_DIR,
   APP_RESOLVERS_DATABASES_DIR,
   APP_RESOLVERS_DIR,
   SCHEMAS_DIR,
@@ -10,8 +8,6 @@ import {
 import { Stores } from '../../libs/sequelize';
 import camelCase from 'camelcase';
 import configs from '../../configs';
-import createAfterHook from './createAfterHook';
-import createBeforeHook from './createBeforeHook';
 import createMutationCreateModel from './createMutationCreateModel';
 import createMutationDeleteModel from './createMutationDeleteModel';
 import createMutationUpdateModel from './createMutationUpdateModel';
@@ -43,10 +39,6 @@ export const createResolversFromStore = async (
     fs.mkdirSync(APP_RESOLVERS_DATABASES_DIR + '/Mutation');
   if (!fs.existsSync(APP_RESOLVERS_DATABASES_DIR + '/Subscription'))
     fs.mkdirSync(APP_RESOLVERS_DATABASES_DIR + '/Subscription');
-
-  if (!fs.existsSync(APP_HOOKS_DIR)) fs.mkdirSync(APP_HOOKS_DIR);
-  if (!fs.existsSync(APP_HOOKS_DATABASES_DIR))
-    fs.mkdirSync(APP_HOOKS_DATABASES_DIR);
 
   const endPoints = Object.keys(stores);
   const endPointCount = endPoints.length;
@@ -99,33 +91,36 @@ export const createResolversFromStore = async (
                     databasePrefix,
                     tableName
                   };
-                  if (beforeHookQuerySingle) await createBeforeHook(args);
-                  if (querySingle) await createQueryModel(args);
-                  if (afterHookQuerySingle) await createAfterHook(args);
-
-                  if (beforeHookQueryMulti)
-                    await createBeforeHook({ ...args, subfix: 's' });
-                  if (queryMulti) await createQueryModels(args);
-                  if (afterHookQueryMulti)
-                    await createAfterHook({ ...args, subfix: 's' });
-
-                  if (beforeHookMutationCreate)
-                    await createBeforeHook({ ...args, prefix: 'create' });
-                  if (mutationCreate) await createMutationCreateModel(args);
-                  if (afterHookMutationCreate)
-                    await createAfterHook({ ...args, prefix: 'create' });
-
-                  if (beforeHookMutationUpdate)
-                    await createBeforeHook({ ...args, prefix: 'update' });
-                  if (mutationUpdate) await createMutationUpdateModel(args);
-                  if (afterHookMutationUpdate)
-                    await createAfterHook({ ...args, prefix: 'update' });
-
-                  if (beforeHookMutationDelete)
-                    await createBeforeHook({ ...args, prefix: 'delete' });
-                  if (mutationDelete) await createMutationDeleteModel(args);
-                  if (afterHookMutationDelete)
-                    await createAfterHook({ ...args, prefix: 'delete' });
+                  if (querySingle)
+                    await createQueryModel(
+                      args,
+                      beforeHookQuerySingle,
+                      afterHookQuerySingle
+                    );
+                  if (queryMulti)
+                    await createQueryModels(
+                      args,
+                      beforeHookQueryMulti,
+                      afterHookQueryMulti
+                    );
+                  if (mutationCreate)
+                    await createMutationCreateModel(
+                      args,
+                      beforeHookMutationCreate,
+                      afterHookMutationCreate
+                    );
+                  if (mutationUpdate)
+                    await createMutationUpdateModel(
+                      args,
+                      beforeHookMutationUpdate,
+                      afterHookMutationUpdate
+                    );
+                  if (mutationDelete)
+                    await createMutationDeleteModel(
+                      args,
+                      beforeHookMutationDelete,
+                      afterHookMutationDelete
+                    );
 
                   if (subscribe) await createSubscriptionModel(args);
                 })

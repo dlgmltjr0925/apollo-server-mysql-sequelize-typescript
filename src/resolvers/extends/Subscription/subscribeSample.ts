@@ -2,11 +2,14 @@ import { pubsub } from '../../../libs/apollo';
 
 const subscribeSample = {
   parent: 'Subscription',
-  filedName: 'subscribeSample',
+  fieldName: 'subscribeSample',
   returnType: '[Sample]',
-  args: {},
+  args: {
+    key: 'String!'
+  },
   resolve: {
-    subscribe: () => pubsub.asyncIterator(['SAMPLE'])
+    subscribe: (parent: any, args: any, context: any, info: any) =>
+      pubsub.asyncIterator([args.key])
   }
 };
 

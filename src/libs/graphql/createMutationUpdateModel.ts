@@ -3,19 +3,19 @@ import { ModelArg } from '.';
 import camelCase from 'camelcase';
 import fs from 'fs';
 
-export const createMutationUpdateModel = async ({
-  endPoint,
-  endPointPrefix,
-  database,
-  databasePrefix,
-  tableName
-}: ModelArg) => {
+export const createMutationUpdateModel = async (
+  { endPoint, endPointPrefix, database, databasePrefix, tableName }: ModelArg,
+  beforeHook?: boolean,
+  afterHook?: boolean
+) => {
   const name = endPointPrefix + databasePrefix + tableName;
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const mutation = `const update${pascalCasedName} = {
+  const mutation = `import log from '../../../utils/log';
+
+const update${pascalCasedName} = {
   parent: 'Mutation',
-  filedName: 'update${pascalCasedName}',
+  fieldName: 'update${pascalCasedName}',
   returnType: 'Int',
   args: {
     input: '${pascalCasedName}Input!',
@@ -23,7 +23,15 @@ export const createMutationUpdateModel = async ({
   },
   resolve: async (parent: any, { input, where }: any, context: any, info: any) => {
     return await context.stores.${endPoint}.${database}.${tableName}.update(input, { where });
-  }
+  },
+  ${beforeHook &&
+    `beforeHook: async (parent: any, args: any, context: any, info: any) => {
+    log.d('[before${pascalCasedName}]');
+  },`}
+  ${afterHook &&
+    `afterHook: async (parent: any, args: any, context: any, info: any) => {
+    log.d('[after${pascalCasedName}]');
+  },`}
 };
 
 export default update${pascalCasedName};`;

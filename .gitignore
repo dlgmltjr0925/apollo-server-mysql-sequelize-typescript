@@ -112,9 +112,9 @@ temp/
 # End of https://www.gitignore.io/api/node
 
 # Config files
-src/configs/index.ts
+src/configs/*
+!src/configs.sample.ts
+
 
 # resolvers, schemas
-src/hooks/databases
 src/resolvers/databases
-src/schemas/databases

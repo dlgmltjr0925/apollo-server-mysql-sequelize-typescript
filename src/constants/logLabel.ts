@@ -1,6 +1,8 @@
 const pid = process.pid;
 
-const LOG_LABEL = {
+type LogLabel = Record<string, string>;
+
+const LOG_LABEL: LogLabel = {
   DEBUG: `[${pid}][DEBUG]`,
   INFO: `[${pid}][INFO]`,
   WARN: `[${pid}][WARN]`,

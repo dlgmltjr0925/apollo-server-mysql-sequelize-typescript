@@ -1,90 +1,31 @@
-import { Stores, checkUpdateState, createStores } from '../libs/sequelize';
-import configs, { PERIOD } from '../configs';
-import {
-  createGraphqlSchemasFromStore,
-  createResolversFromStore
-} from '../libs/graphql';
-import { getSchemas, getTypeDefs } from '../schemas';
+import { BaseContext, ContextFunction, Server } from '../libs/apollo/server';
 
-import client from '../utils/client';
-import { getResolvers } from '../resolvers';
-import log from '../utils/log';
+import ApolloClient from 'apollo-client';
+import { NormalizedCacheObject } from 'apollo-cache-inmemory';
+import client from './client';
 
-interface Context {
-  stores: Stores;
+export interface Context extends BaseContext {
+  user: {
+    token: string;
+  };
+  client: ApolloClient<NormalizedCacheObject>;
 }
 
-export interface Options {
-  context: Context;
-}
+const context: ContextFunction<Context> = (context, baseContext) => {
+  const { req } = context;
 
-interface Server {
-  getOptions: () => Promise<Options>;
-}
-
-class Server implements Server {
-  static update = async () => {
-    const stores = await createStores();
-
-    if (
-      configs.defaultGenerateOptions.period === PERIOD.ALWAYS ||
-      (configs.defaultGenerateOptions.period === PERIOD.AFTER_DB_UPDATE &&
-        checkUpdateState())
-    ) {
-      await createResolversFromStore(stores);
-    }
-    process.exit(configs.messages.exitAfterUpdate.code);
+  const token = req.headers.authorization || '';
+  const user = {
+    token
   };
 
-  static getOptions = async () => {
-    const stores = await createStores();
-
-    const graphqlSchemas = await createGraphqlSchemasFromStore(stores);
-    const graphqlSchemaNames = Object.keys(graphqlSchemas);
-
-    const schemas = getSchemas();
-    graphqlSchemaNames.map(name => {
-      schemas[name] = graphqlSchemas[name];
-    });
-
-    const context = (context: any) => {
-      const { req } = context;
-      // TODO get User from req.header. User
-      const token = req.headers.authorization || '';
-      const user = { token };
-
-      return {
-        ...context,
-        stores,
-        client,
-        user
-      };
-    };
-
-    const resolvers = await getResolvers();
-
-    const typeDefs = await getTypeDefs();
-
-    const subscriptions = {
-      onConnect: (connectionParams: any, webSocket: any, context: any) => {
-        log.i('Connect subscription');
-        log.d(connectionParams, webSocket, context);
-      },
-      onDisconnect: (webSocket: any, context: any) => {
-        log.i('Disconnect subscription');
-        log.d(webSocket, context);
-      }
-    };
-
-    const options = {
-      context,
-      resolvers,
-      typeDefs,
-      subscriptions
-    };
-
-    return options;
+  return {
+    ...baseContext,
+    user,
+    client
   };
-}
+};
 
-export default Server;
+const server = new Server<Context>(context);
+
+export default server;

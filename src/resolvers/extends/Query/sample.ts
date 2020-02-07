@@ -1,7 +1,18 @@
 import DataLoader from 'dataloader';
+import { QueryOptions } from '../../../libs/graphql/types';
 import log from '../../../utils/log';
 
-export const sample = {
+interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: 'A' | 'B' | 'C';
+}
+
+interface Args {
+  where: Sample;
+}
+
+export const sample: QueryOptions<Args, Sample> = {
   parent: 'Query',
   fieldName: 'sample',
   returnType: 'Sample',

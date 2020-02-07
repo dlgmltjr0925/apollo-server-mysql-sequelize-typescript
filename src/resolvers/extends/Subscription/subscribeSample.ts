@@ -1,6 +1,18 @@
-import { pubsub } from '../../../libs/apollo';
+import { Subscription, SubscriptionOptions } from '../../../libs/graphql/types';
 
-const subscribeSample = {
+import { pubsub } from '../../../libs/apollo/pubsub';
+
+interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: 'A' | 'B' | 'C';
+}
+
+interface Args {
+  key: string;
+}
+
+const subscribeSample: SubscriptionOptions<Args, Sample[]> = {
   parent: 'Subscription',
   fieldName: 'subscribeSample',
   returnType: '[Sample]',

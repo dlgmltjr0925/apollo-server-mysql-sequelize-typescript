@@ -1,6 +1,6 @@
 {
   "name": "apollo-server-mysql-sequelize-typescript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Apollo server developed as typescript using sequelize ORM based on mysql schema",
   "main": "dist/index.js",
   "author": "balocode",
@@ -13,6 +13,11 @@
     "start": "tsc && node dist/index"
   },
   "dependencies": {
+    "@types/bluebird": "^3.5.29",
+    "@types/isomorphic-fetch": "0.0.35",
+    "@types/lodash": "^4.14.149",
+    "@types/type-is": "^1.6.3",
+    "@types/validator": "^12.0.1",
     "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.6.8",
     "apollo-link-http": "^1.5.16",
@@ -27,10 +32,6 @@
     "sequelize": "^5.21.3"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.29",
-    "@types/isomorphic-fetch": "0.0.35",
-    "@types/lodash": "^4.14.149",
-    "@types/validator": "^12.0.1",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "colors": "^1.4.0",

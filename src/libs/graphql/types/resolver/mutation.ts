@@ -1,25 +1,25 @@
-import { Hook, Resolve, Resolver } from './Resolver';
+import { Args, Hook, Resolve, Resolver } from './common';
 
-interface QueryResolver<TArgs, TReturn> extends Resolver<TArgs, TReturn> {
+export interface MutationResolver<TArgs, TReturn> extends Resolver<TArgs> {
   resolve: Resolve<TArgs, TReturn>;
 }
 
-export interface QueryOptions<TArgs, TReturn> {
+export interface MutationOptions<TArgs, TReturn> {
   parent: string;
   fieldName: string;
   returnType: string;
-  args: TArgs;
+  args: Args<TArgs>;
   resolve: Resolve<TArgs, TReturn>;
 
   beforeHook?: Hook<TArgs>;
   afterHook?: Hook<TArgs>;
 }
 
-export default class Query<TArgs, TReturn> {
+export class Mutation<TArgs, TReturn> {
   parent: string;
   fieldName: string;
   returnType: string;
-  args: TArgs;
+  args: Args<TArgs>;
   resolve: Resolve<TArgs, TReturn>;
 
   beforeHook?: Hook<TArgs>;
@@ -33,7 +33,7 @@ export default class Query<TArgs, TReturn> {
     resolve,
     beforeHook,
     afterHook
-  }: QueryOptions<TArgs, TReturn>) {
+  }: MutationOptions<TArgs, TReturn>) {
     this.parent = parent;
     this.fieldName = fieldName;
     this.returnType = returnType;
@@ -57,7 +57,7 @@ export default class Query<TArgs, TReturn> {
     };
   };
 
-  public getResolver = (): QueryResolver<TArgs, TReturn> => {
+  public getResolver = (): MutationResolver<TArgs, TReturn> => {
     try {
       return {
         parent: this.parent,
@@ -71,3 +71,5 @@ export default class Query<TArgs, TReturn> {
     }
   };
 }
+
+export default Mutation;

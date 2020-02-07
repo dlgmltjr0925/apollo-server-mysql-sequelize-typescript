@@ -13,7 +13,7 @@ export const createSubscriptionModel = async ({
   const name = endPointPrefix + databasePrefix + tableName;
   const pascalCasedName = camelCase(name, { pascalCase: true });
 
-  const mutation = `import { pubsub } from '../../../libs/apollo';
+  const mutation = `import { pubsub } from '../../../libs/apollo/pubsub';
 
 const subscribe${pascalCasedName} = {
   parent: 'Subscription',

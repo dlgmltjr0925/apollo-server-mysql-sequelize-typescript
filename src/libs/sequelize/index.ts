@@ -1,30 +1,56 @@
-import * as fs from 'fs';
+import * as Sequelize from 'sequelize';
 
-import {
-  BIGINT,
-  BLOB,
-  BOOLEAN,
-  DATE,
-  DATEONLY,
-  DECIMAL,
-  DOUBLE,
-  ENUM,
-  FLOAT,
-  GEOMETRY,
-  INTEGER,
-  SMALLINT,
-  STRING,
-  Sequelize,
-  TEXT,
-  TINYINT
-} from 'sequelize';
 import configs, { AccessInfo, GenerateOptions } from '../../configs';
 
 import { DB_CHECK_DIR } from '../../constants/path';
 import { Options } from 'sequelize';
 import camelCase from 'camelcase';
 import { cloneDeep } from 'lodash';
+import fs from 'fs';
 import log from '../../utils/log';
+
+type TableName = Record<string, string>;
+type SequelizeTypes =
+  | Sequelize.BigIntDataTypeConstructor
+  | Sequelize.BlobDataTypeConstructor
+  | Sequelize.AbstractDataTypeConstructor
+  | Sequelize.DateDataTypeConstructor
+  | Sequelize.DateOnlyDataTypeConstructor
+  | Sequelize.DecimalDataTypeConstructor
+  | Sequelize.DoubleDataTypeConstructor
+  | Sequelize.EnumDataTypeConstructor
+  | Sequelize.FloatDataTypeConstructor
+  | Sequelize.GeometryDataTypeConstructor
+  | Sequelize.IntegerDataTypeConstructor
+  | Sequelize.SmallIntegerDataTypeConstructor
+  | Sequelize.StringDataTypeConstructor
+  | Sequelize.TextDataTypeConstructor
+  | Sequelize.TinyIntegerDataTypeConstructor
+  | Sequelize.StringDataType
+  | Sequelize.TextDataType
+  | Sequelize.SmallIntegerDataType
+  | Sequelize.DecimalDataType
+  | Sequelize.EnumDataType<string>
+  | Sequelize.BlobDataType
+  | Sequelize.GeometryDataType;
+
+interface Column {
+  field: string;
+  type: SequelizeTypes;
+  scalarType: string;
+  allowNull: boolean;
+  primaryKey?: boolean;
+  autoIncrement?: boolean;
+  defaultValue?: Sequelize.Utils.Literal;
+}
+
+interface Table {
+  [camelCasedColumnName: string]: Column;
+}
+
+interface Schemas {
+  [camelCasedTableName: string]: Table;
+}
 
 interface Database {
   [key: string]: any;
@@ -47,7 +73,7 @@ export interface Stores {
   [key: string]: Database;
 }
 
-const getSequelizeTypeFromDBType = (dbType: string) => {
+const getSequelizeTypeFromDBType = (dbType: string): SequelizeTypes => {
   let value: string[] = [''];
   let type = dbType;
   if (dbType.split(' ')[0].slice(-1) === ')') {
@@ -59,48 +85,50 @@ const getSequelizeTypeFromDBType = (dbType: string) => {
   }
   switch (type) {
     case 'char':
-      return STRING(parseInt(value[0], 10));
+      return Sequelize.STRING(parseInt(value[0], 10));
     case 'varchar':
-      return STRING(parseInt(value[0], 10));
+      return Sequelize.STRING(parseInt(value[0], 10));
     case 'text':
     case 'longtext':
-      return TEXT;
+      return Sequelize.TEXT;
     case 'tinytext':
-      return TEXT({ length: 'tiny' });
+      return Sequelize.TEXT({ length: 'tiny' });
     case 'int':
-      return INTEGER;
+      return Sequelize.INTEGER;
     case 'smallint':
-      return SMALLINT({ length: parseInt(value[0], 10) });
+      return Sequelize.SMALLINT({ length: parseInt(value[0], 10) });
     case 'bigint':
-      return BIGINT({ length: parseInt(value[0], 10) });
+      return Sequelize.BIGINT({ length: parseInt(value[0], 10) });
     case 'float':
-      return FLOAT;
+      return Sequelize.FLOAT;
     case 'double':
-      return DOUBLE;
+      return Sequelize.DOUBLE;
     case 'decimal':
-      return DECIMAL(parseInt(value[0], 10), parseInt(value[1], 10));
+      return Sequelize.DECIMAL(parseInt(value[0], 10), parseInt(value[1], 10));
     case 'date':
-      return DATEONLY;
+      return Sequelize.DATEONLY;
     case 'datetime':
-      return value.length > 0 ? DATE(parseInt(value[0])) : DATE;
+      return value.length > 0
+        ? Sequelize.DATE(parseInt(value[0]))
+        : Sequelize.DATE;
     case 'tinyint':
       return value[0].length > 1
-        ? TINYINT({ length: parseInt(value[0], 10) })
-        : BOOLEAN;
+        ? Sequelize.TINYINT({ length: parseInt(value[0], 10) })
+        : Sequelize.BOOLEAN;
     case 'enum':
-      return ENUM(...value);
+      return Sequelize.ENUM(...value);
     case 'blob':
-      return BLOB;
+      return Sequelize.BLOB;
     case 'longblob':
-      return BLOB('long');
+      return Sequelize.BLOB('long');
     case 'mediumblob':
-      return BLOB('medium');
+      return Sequelize.BLOB('medium');
     case 'tinyblob':
-      return BLOB('tiny');
+      return Sequelize.BLOB('tiny');
     case 'geometry':
-      return GEOMETRY;
+      return Sequelize.GEOMETRY;
     case 'point':
-      return GEOMETRY('point');
+      return Sequelize.GEOMETRY('point');
     default:
       throw new Error(`${dbType} cannot be changed.`);
   }
@@ -135,15 +163,15 @@ const getScalarTypeFromDBType = (dbType: string): string => {
 };
 
 const createModels = async (
-  columns: any,
+  columns: unknown[],
   { database, user, password }: AccessInfo,
   options: Options
 ) => {
-  const sequelize = new Sequelize(database, user, password, options);
+  const sequelize = new Sequelize.Sequelize(database, user, password, options);
 
   // define models
-  const schemas: any = {};
-  const tableNameTable: any = {};
+  const schemas: Schemas = {};
+  const tableNameTable: TableName = {};
   columns.forEach(
     ({
       tableName,
@@ -174,7 +202,7 @@ const createModels = async (
       if (columnDefault)
         schemas[camelCasedTableName][
           camelCasedColumnName
-        ].defaultValue = Sequelize.literal(`${columnDefault}`.trim());
+        ].defaultValue = Sequelize.Sequelize.literal(`${columnDefault}`.trim());
     }
   );
 
@@ -208,7 +236,12 @@ export const createStores = async (): Promise<Stores> => {
     configs.databases.map(async ({ hostname, options, accessInfos }) => {
       stores[hostname] = {};
       const { database, user, password } = accessInfos[0];
-      const sequelize = new Sequelize(database, user, password, options);
+      const sequelize = new Sequelize.Sequelize(
+        database,
+        user,
+        password,
+        options
+      );
       await Promise.all(
         accessInfos.slice(1).map(async accessInfo => {
           const { alias, database } = accessInfo;
@@ -262,7 +295,12 @@ export const checkUpdateState = async (): Promise<boolean> => {
   await Promise.all(
     configs.databases.map(async ({ options, accessInfos }) => {
       const { database, user, password } = accessInfos[0];
-      const sequelize = new Sequelize(database, user, password, options);
+      const sequelize = new Sequelize.Sequelize(
+        database,
+        user,
+        password,
+        options
+      );
       const databases = accessInfos.slice(1).map(({ database }) => database);
       const tableSchemas = databases
         .map(database => `TABLE_SCHEMA = '${database}'`)

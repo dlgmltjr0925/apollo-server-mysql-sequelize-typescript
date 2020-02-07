@@ -1,8 +1,8 @@
 import { ApolloServer } from 'apollo-server';
-import Server from './utils/server';
 import cluster from 'cluster';
 import configs from './configs';
 import log from './utils/log';
+import server from './utils/server';
 
 const master = async (): Promise<void> => {
   if (configs.cluster.count <= 1) worker();
@@ -17,10 +17,10 @@ const master = async (): Promise<void> => {
 };
 
 const worker = async (): Promise<void> => {
-  const options = await Server.getOptions();
+  const configs = await server.getServerConfigs();
 
-  const server = new ApolloServer(options);
-  const { url, subscriptionsUrl } = await server.listen();
+  const apolloServer = new ApolloServer(configs);
+  const { url, subscriptionsUrl } = await apolloServer.listen();
   log.i(`🚀 Server ready at ${url}`);
   log.i(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
 };

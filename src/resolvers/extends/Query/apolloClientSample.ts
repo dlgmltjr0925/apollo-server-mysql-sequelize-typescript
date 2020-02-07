@@ -1,3 +1,4 @@
+import { QueryOptions } from '../../../libs/graphql/types';
 import { gql } from 'apollo-server';
 import log from '../../../utils/log';
 
@@ -11,7 +12,17 @@ const SAMPLE = gql`
   }
 `;
 
-export const sample = {
+interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: 'A' | 'B' | 'C';
+}
+
+interface Args {
+  where: Sample;
+}
+
+export const sample: QueryOptions<Args, Sample> = {
   parent: 'Query',
   fieldName: 'apolloClientSample',
   returnType: 'Sample',

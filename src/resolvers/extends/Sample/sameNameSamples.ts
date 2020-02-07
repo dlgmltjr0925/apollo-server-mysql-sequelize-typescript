@@ -1,6 +1,15 @@
+import { QueryOptions } from '../../../libs/graphql/types';
 import log from '../../../utils/log';
 
-export const sameNameSamples = {
+interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: 'A' | 'B' | 'C';
+}
+
+interface Args {}
+
+export const sameNameSamples: QueryOptions<Args, Sample[]> = {
   parent: 'Sample',
   fieldName: 'sameNameSamples',
   returnType: '[Sample]',

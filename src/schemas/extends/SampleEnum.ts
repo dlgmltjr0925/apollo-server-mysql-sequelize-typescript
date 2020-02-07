@@ -14,7 +14,9 @@
 //   values: ['ADMIN', 'USER'],
 // }
 
-export const SampleEnum = {
+import { EnumOptions } from '../../libs/graphql/types';
+
+export const SampleEnum: EnumOptions = {
   fieldName: 'SampleEnum',
   schemaType: 'Enum', // Object: Output Type, ObjectIO: Input Output Type, Enum: Enum type
   subfield: {

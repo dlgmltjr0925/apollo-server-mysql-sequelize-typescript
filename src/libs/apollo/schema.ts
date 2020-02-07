@@ -1,9 +1,9 @@
-import { SCHEMAS_DIR, SCHEMAS_EXTENDS_DIR } from '../constants/path';
+import { SCHEMAS_DIR, SCHEMAS_EXTENDS_DIR } from '../../constants/path';
 
 import fs from 'fs';
-import { getGraphqlSchemas } from '../resolvers';
+import { getGraphqlSchemas } from '../../libs/apollo/resolver';
 import { gql } from 'apollo-server';
-import log from '../utils/log';
+import log from '../../utils/log';
 
 enum SCHEMA_TYPE {
   OBJECT = 'Object',
@@ -13,7 +13,7 @@ enum SCHEMA_TYPE {
 
 const schemas: any = {};
 
-let typeDefs = '';
+let typeDefs: string = '';
 
 const addResolver = async () => {
   const types = ['Query', 'Mutation', 'Subscription'];
@@ -40,10 +40,11 @@ const addResolver = async () => {
 
     typeDefs += typeDef;
 
-    if (!process.env.prd)
-      fs.writeFile(`${SCHEMAS_DIR}/${type}.graphql`, typeDef, err => {
-        if (err) console.error(err);
-      });
+    try {
+      fs.writeFileSync(`${SCHEMAS_DIR}/${type}.graphql`, typeDef);
+    } catch (error) {
+      log.e(error);
+    }
   });
 };
 
@@ -111,10 +112,11 @@ const addSchema = async () => {
 
   typeDefs += typeDef;
 
-  if (!process.env.prd)
-    fs.writeFile(`${SCHEMAS_DIR}/Schemas.graphql`, typeDef, err => {
-      if (err) console.error(err);
-    });
+  try {
+    fs.writeFileSync(`${SCHEMAS_DIR}/Schemas.graphql`, typeDef);
+  } catch (error) {
+    log.e(error);
+  }
 };
 
 export const getTypeDefs = async () => {

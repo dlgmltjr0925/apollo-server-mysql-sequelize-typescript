@@ -1,7 +1,6 @@
-import { Hook, Resolver, SubscriptionResolve } from './Resolver';
+import { Args, Hook, Resolver, SubscriptionResolve } from './common';
 
-interface SubscriptionResolver<TArgs, TReturn>
-  extends Resolver<TArgs, TReturn> {
+export interface SubscriptionResolver<TArgs, TReturn> extends Resolver<TArgs> {
   resolve: SubscriptionResolve<TArgs, TReturn>;
 }
 
@@ -9,18 +8,18 @@ export interface SubscriptionOptions<TArgs, TReturn> {
   parent: string;
   fieldName: string;
   returnType: string;
-  args: TArgs;
+  args: Args<TArgs>;
   resolve: SubscriptionResolve<TArgs, TReturn>;
 
   beforeHook?: Hook<TArgs>;
   afterHook?: Hook<TArgs>;
 }
 
-export default class Subscription<TArgs, TReturn> {
+export class Subscription<TArgs, TReturn> {
   parent: string;
   fieldName: string;
   returnType: string;
-  args: TArgs;
+  args: Args<TArgs>;
   resolve: SubscriptionResolve<TArgs, TReturn>;
 
   beforeHook?: Hook<TArgs>;
@@ -59,3 +58,5 @@ export default class Subscription<TArgs, TReturn> {
     }
   };
 }
+
+export default Subscription;

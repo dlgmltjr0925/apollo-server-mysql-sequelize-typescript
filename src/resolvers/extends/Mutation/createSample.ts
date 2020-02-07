@@ -1,14 +1,25 @@
+import { MutationOptions } from '../../../libs/graphql/types';
 import log from '../../../utils/log';
-import { pubsub } from '../../../libs/apollo';
+import { pubsub } from '../../../libs/apollo/pubsub';
 
-const createSample = {
+interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: 'A' | 'B' | 'C';
+}
+
+interface Args {
+  input: Sample;
+}
+
+const createSample: MutationOptions<Args, Sample> = {
   parent: 'Mutation',
   fieldName: 'createSample',
   returnType: 'Sample',
   args: {
     input: 'SampleInput'
   },
-  resolve: async (parent: any, args: any, context: any, info: any) => {
+  resolve: async (parent, args, context, info) => {
     if (!context.stores.sample)
       context.stores.sample = {
         nextKey: 1,
@@ -28,10 +39,10 @@ const createSample = {
 
     return context.stores.sample.datas.slice(-1)[0];
   },
-  beforeHook: (parent: any, args: any, context: any, info: any) => {
+  beforeHook: async (parent, args, context, info) => {
     log.d('[beforeCreateSample]');
   },
-  afterHook: (parent: any, args: any, context: any, info: any) => {
+  afterHook: async (parent, args, context, info) => {
     log.d('[afterCreateSample]');
   }
 };

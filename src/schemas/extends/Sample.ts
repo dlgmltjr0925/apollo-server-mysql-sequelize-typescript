@@ -10,13 +10,15 @@
 //   values: ['ADMIN', 'USER'],
 // }
 
-export const Sample = {
+import { ObjectIOOptions } from '../../libs/graphql/types';
+
+export const Sample: ObjectIOOptions = {
   fieldName: 'Sample',
   schemaType: 'ObjectIO', // Object: Output Type, ObjectIO: Input Output Type, Enum: Enum type
   subfield: {
     id: 'Int',
     name: 'String',
-    sampleEnum: 'SampleEnum' // Enum type 생성 필요
+    sampleEnum: 'SampleEnum'
   }
 };
 

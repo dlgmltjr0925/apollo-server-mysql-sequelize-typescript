@@ -1,17 +1,19 @@
+import { GraphQLResolveInfo } from 'graphql';
+
 export type Parent = any;
+
+export type Args<T> = { [P in keyof Required<T>]: string };
 
 export interface Context extends Record<string, any> {
   stores: any;
   [key: string]: any;
 }
 
-export type Info = any;
-
 export type Resolve<TArgs, TReturn> = (
   parent: Parent,
   args: TArgs,
   context: Context,
-  info: Info
+  info: GraphQLResolveInfo
 ) => Promise<TReturn | null>;
 
 export interface SubscriptionResolve<TArgs, TReturn> {
@@ -19,7 +21,7 @@ export interface SubscriptionResolve<TArgs, TReturn> {
     parent: Parent,
     args: TArgs,
     context: Context,
-    info: Info
+    info: GraphQLResolveInfo
   ) => AsyncIterator<TReturn>;
 }
 
@@ -27,12 +29,12 @@ export type Hook<TArgs> = (
   parent: Parent,
   args: TArgs,
   context: Context,
-  info: Info
+  info: GraphQLResolveInfo
 ) => Promise<void>;
 
-export interface Resolver<TArgs = Record<string, any>, TReturn = any> {
+export interface Resolver<TArgs = Record<string, any>> {
   parent: string;
   fieldName: string;
   returnType: string;
-  args: TArgs;
+  args: Args<TArgs>;
 }

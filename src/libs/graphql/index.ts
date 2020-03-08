@@ -1,6 +1,10 @@
 import {
   APP_RESOLVERS_DATABASES_DIR,
   APP_RESOLVERS_DIR,
+  APP_SCHEMAS_DATABASES_DIR,
+  APP_SCHEMAS_DIR,
+  APP_SCHEMAS_EXTENDS_DIR,
+  SCHEMAS_DATABASES_DIR,
   SCHEMAS_DIR,
   SCHEMAS_EXTENDS_DIR
 } from '../../constants/path';
@@ -8,9 +12,11 @@ import {
 import { Stores } from '../../libs/sequelize';
 import camelCase from 'camelcase';
 import configs from '../../configs';
+import createEnumSchema from './createEnumSchema';
 import createMutationCreateModel from './createMutationCreateModel';
 import createMutationDeleteModel from './createMutationDeleteModel';
 import createMutationUpdateModel from './createMutationUpdateModel';
+import createObjectSchema from './createObjectSchema';
 import createQueryModel from './createQueryModel';
 import createQueryModels from './createQueryModels';
 import createSubscriptionModel from './createSubscriptionModel';
@@ -27,7 +33,26 @@ export interface ModelArg {
   tableName: string;
 }
 
-export const createResolversFromStore = async (
+export interface Field {
+  args: object;
+  returnType: string;
+}
+
+export interface ObjectSchema {
+  schemaType: 'Object' | 'ObjectIO';
+  [key: string]: string | Field;
+}
+
+export interface EnumSchema {
+  schemaType: 'Enum';
+  [key: string]: string | string[];
+}
+
+export interface GraphqlSchema {
+  [key: string]: ObjectSchema | EnumSchema;
+}
+
+export const createResolverFilesFromStore = async (
   stores: Stores
 ): Promise<void> => {
   if (!fs.existsSync(APP_RESOLVERS_DIR)) fs.mkdirSync(APP_RESOLVERS_DIR);
@@ -135,8 +160,10 @@ export const createResolversFromStore = async (
 
 export const createGraphqlSchemasFromStore = async (
   stores: Stores
-): Promise<any> => {
+): Promise<GraphqlSchema> => {
   if (!fs.existsSync(SCHEMAS_DIR)) fs.mkdirSync(SCHEMAS_DIR);
+  if (!fs.existsSync(SCHEMAS_DATABASES_DIR))
+    fs.mkdirSync(SCHEMAS_DATABASES_DIR);
   if (!fs.existsSync(SCHEMAS_EXTENDS_DIR)) fs.mkdirSync(SCHEMAS_EXTENDS_DIR);
 
   const graphqlSchemas: any = {};
@@ -224,7 +251,41 @@ export const createGraphqlSchemasFromStore = async (
   return graphqlSchemas;
 };
 
+// Define type of schemas for typescript
+export const createGraphqlSchemaFilesFromStore = async (
+  stores: Stores
+): Promise<void> => {
+  if (!fs.existsSync(APP_SCHEMAS_DIR)) fs.mkdirSync(APP_SCHEMAS_DIR);
+  if (!fs.existsSync(APP_SCHEMAS_DATABASES_DIR))
+    fs.mkdirSync(APP_SCHEMAS_DATABASES_DIR);
+  if (!fs.existsSync(APP_SCHEMAS_EXTENDS_DIR))
+    fs.mkdirSync(APP_SCHEMAS_EXTENDS_DIR);
+
+  const graphqlSchemas = await createGraphqlSchemasFromStore(stores);
+
+  const schemas: GraphqlSchema = {};
+  for (let fieldName in graphqlSchemas) {
+    const schema = graphqlSchemas[fieldName];
+    if (schema.schemaType === 'Object' && fieldName.slice(-5) !== 'Input') {
+      schemas[fieldName] = schema;
+      if (graphqlSchemas[fieldName + 'Input'])
+        schemas[fieldName].schemaType = 'ObjectIO';
+    } else if (schema.schemaType === 'Enum') {
+      schemas[fieldName] = schema;
+    }
+  }
+  for (let fieldName in schemas) {
+    const schema = schemas[fieldName];
+    if (schema.schemaType === 'Object' || schema.schemaType === 'ObjectIO') {
+      createObjectSchema(fieldName, schema);
+    } else if (schema.schemaType === 'Enum') {
+      createEnumSchema(fieldName, schema);
+    }
+  }
+};
+
 export default {
-  createResolversFromStore,
+  createResolverFilesFromStore,
+  createGraphqlSchemaFilesFromStore,
   createGraphqlSchemasFromStore
 };

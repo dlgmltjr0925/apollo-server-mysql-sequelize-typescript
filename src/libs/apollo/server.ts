@@ -22,7 +22,7 @@ export interface BaseContext {
 export type ContextFunction<T> = (
   context: ExpressContext,
   baseContext: BaseContext
-) => T;
+) => Promise<T>;
 
 export class Server<TContext> {
   context: ContextFunction<TContext>;
@@ -62,10 +62,8 @@ export class Server<TContext> {
       }
     };
 
-    const context: ContextFunction<TContext> = context => {
-      return {
-        ...this.context(context, { stores, resolvers, typeDefs })
-      };
+    const context: ContextFunction<TContext> = async context => {
+      return await this.context(context, { stores, resolvers, typeDefs });
     };
 
     this.configs = {

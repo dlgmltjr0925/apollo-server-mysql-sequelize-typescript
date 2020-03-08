@@ -1,6 +1,6 @@
 {
   "name": "apollo-server-mysql-sequelize-typescript",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Apollo server developed as typescript using sequelize ORM based on mysql schema",
   "main": "dist/index.js",
   "author": "balocode",
@@ -8,7 +8,7 @@
   "scripts": {
     "initialize": "bash ./src/scripts/initialize.sh",
     "update": "git pull && yarn",
-    "clear": "rm -rf dist src/resolvers/databases",
+    "clear": "rm -rf dist src/resolvers/databases src/schemas/databases",
     "build": "yarn clear && tsc && node dist/scripts/prebuild && tsc",
     "start": "tsc && node dist/index"
   },

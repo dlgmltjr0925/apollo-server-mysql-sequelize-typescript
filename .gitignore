@@ -118,3 +118,4 @@ src/configs/*
 
 # resolvers, schemas
 src/resolvers/databases
+src/schemas/databases

@@ -11,8 +11,15 @@
 // }
 
 import { ObjectIOOptions } from '../../libs/graphql/types';
+import { SampleEnum } from './SampleEnum';
 
-export const Sample: ObjectIOOptions = {
+export interface Sample {
+  id: number;
+  name: string;
+  sampleEnum: SampleEnum;
+}
+
+export const Schema: ObjectIOOptions = {
   fieldName: 'Sample',
   schemaType: 'ObjectIO', // Object: Output Type, ObjectIO: Input Output Type, Enum: Enum type
   subfield: {
@@ -22,4 +29,4 @@ export const Sample: ObjectIOOptions = {
   }
 };
 
-export default Sample;
+export default Schema;

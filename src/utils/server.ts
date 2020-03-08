@@ -11,7 +11,7 @@ export interface Context extends BaseContext {
   client: ApolloClient<NormalizedCacheObject>;
 }
 
-const context: ContextFunction<Context> = (context, baseContext) => {
+const context: ContextFunction<Context> = async (context, baseContext) => {
   const { req } = context;
 
   const token = req.headers.authorization || '';

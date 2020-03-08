@@ -16,12 +16,18 @@
 
 import { EnumOptions } from '../../libs/graphql/types';
 
-export const SampleEnum: EnumOptions = {
+export enum SampleEnum {
+  A = 'A',
+  B = 'B',
+  C = 'C'
+}
+
+export const schema: EnumOptions = {
   fieldName: 'SampleEnum',
   schemaType: 'Enum', // Object: Output Type, ObjectIO: Input Output Type, Enum: Enum type
   subfield: {
-    values: ['A', 'B', 'C']
+    values: Object.values(SampleEnum)
   }
 };
 
-export default SampleEnum;
+export default schema;

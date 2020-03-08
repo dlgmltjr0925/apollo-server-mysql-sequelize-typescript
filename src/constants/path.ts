@@ -17,9 +17,11 @@ export const APP_RESOLVERS_DATABASES_DIR = APP_RESOLVERS_DIR + '/databases';
 export const APP_RESOLVERS_EXTENDS_DIR = APP_RESOLVERS_DIR + '/extends';
 
 export const SCHEMAS_DIR = BUILD_ROOT + '/schemas';
+export const SCHEMAS_DATABASES_DIR = SCHEMAS_DIR + '/databases';
 export const SCHEMAS_EXTENDS_DIR = SCHEMAS_DIR + '/extends';
 
 export const APP_SCHEMAS_DIR = APP_ROOT + '/src/schemas';
+export const APP_SCHEMAS_DATABASES_DIR = APP_SCHEMAS_DIR + '/databases';
 export const APP_SCHEMAS_EXTENDS_DIR = APP_SCHEMAS_DIR + '/extends';
 
 export const UTILS_DIR = BUILD_ROOT + '/utils';
@@ -44,9 +46,11 @@ export default {
   APP_RESOLVERS_EXTENDS_DIR,
 
   SCHEMAS_DIR,
+  SCHEMAS_DATABASES_DIR,
   SCHEMAS_EXTENDS_DIR,
 
   APP_SCHEMAS_DIR,
+  APP_SCHEMAS_DATABASES_DIR,
   APP_SCHEMAS_EXTENDS_DIR,
 
   UTILS_DIR
